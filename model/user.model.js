@@ -58,6 +58,12 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+userSchema.pre("save", function (next) {
+  if (!this.isModified("password") || this.isNew) return next();
+  this.passwordChangeAt = Date.now() - 1000;
+  next();
+});
+
 userSchema.statics.isEmailTaken = async function (email) {
   return await this.findOne({ email }, { email: 1, name: 1, password: 1 });
 };
